@@ -57,10 +57,10 @@ public class ExcelGenerationServiceImpl implements ExcelGenerationService {
         }
     }
 
-    // 作用是产生excel文件
+    // create excel file
     @Override
     public File generateExcelReport(ExcelData data) throws IOException {
-        // 先检验data是否符合标准
+        // valid if data is ok
         validateDate(data);
         XSSFWorkbook workbook = new XSSFWorkbook();
 
@@ -128,13 +128,13 @@ public class ExcelGenerationServiceImpl implements ExcelGenerationService {
 
     @Override
     public ReturnExcelFileType generateAndSaveExcelFile(ExcelRequest request) throws IOException {
-        //先把ExcelRequest转化成ExcelData
+        //change ExcelRequest into ExcelData
         ExcelRequestConverter.ExcelRequestValidation(request);
         File file = generateExcelReport(ExcelRequestConverter.convertExcelRequestToExcelData(request));
         if(!file.exists() || !file.isFile()){
             throw new FileCannotSaveException("fail to generate excel file");
         }
-        // 然后让generator根据这个data生成一个Excel文件
+        // generator create a new excel according to this data
         String id = file.getName();
         String abs_path = file.getAbsolutePath();
         String fileID = excelRepository.saveFile(id, abs_path);
@@ -150,11 +150,12 @@ public class ExcelGenerationServiceImpl implements ExcelGenerationService {
 
     @Override
     public ReturnExcelFileType generateAndSaveMultiSheetsExcelFile(MultiSheetExcelRequest request) throws IOException{
+        ExcelRequestConverter.ExcelRequestMultiSheetValidation(request);
         File file = generateExcelReport(ExcelRequestConverter.convertExcelRequestToExcelData_MultiSheets(request));
         if(!file.exists() || !file.isFile()){
             throw new FileCannotSaveException("fail to generate multi-sheets excel file");
         }
-        // 然后让generator根据这个data生成一个Excel文件
+        // generator create a new Excel according to data
         String id = file.getName();
         String abs_path = file.getAbsolutePath();
         String fileID = excelRepository.saveFile(id, abs_path);

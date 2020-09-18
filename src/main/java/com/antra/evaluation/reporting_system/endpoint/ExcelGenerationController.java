@@ -1,4 +1,6 @@
 package com.antra.evaluation.reporting_system.endpoint;
+import com.antra.evaluation.reporting_system.exception.NullRepoException;
+import com.antra.evaluation.reporting_system.exception.deleteNonExistFileException;
 import com.antra.evaluation.reporting_system.pojo.api.ExcelRequest;
 import com.antra.evaluation.reporting_system.pojo.api.ExcelResponse;
 import com.antra.evaluation.reporting_system.pojo.api.MultiSheetExcelRequest;
@@ -37,10 +39,11 @@ public class ExcelGenerationController {
     }
 
 
-    // 产生一个新的excel文件 返回ResponseEntity
-    //返回 excel meta info 里面包含 fileID，generatedTime， filesize， download link
-    // 需要把传入的参数 request 转化成 exceldata的形式
-    // 创建文件 用 excel service
+
+    // Generate a new excel file and return responseEntity
+    //return  excel meta info which includes fileID，generatedTime， filesize， download link
+    // pass parameters into request change into exceldata的形式
+    // create a file by using excel service
     @PostMapping("/excel")
     @ApiOperation("Generate Excel")
 
@@ -62,7 +65,7 @@ public class ExcelGenerationController {
         }
     }
 
-    // 创建split的文件，用excel service
+    // create split file by using excel service
     @PostMapping("/excel/auto")
     @ApiOperation("Generate Multi-Sheet Excel Using Split field")
     public ResponseEntity<ExcelResponse> createMultiSheetExcel(@Valid @RequestBody MultiSheetExcelRequest request) throws IOException {
@@ -81,17 +84,21 @@ public class ExcelGenerationController {
         }
     }
 
-    // 这个负责显示目前所有的文件，用excel service就行
+    // this is used to list all the file that you provided
     @GetMapping("/excel")
     @ApiOperation("List all existing files")
     public ResponseEntity<List<ExcelFileIdAndPath>> listExcels() {
         //var response = new ArrayList<ExcelFileIdAndPath>();
         var response = excelService.listExistingFiles();
+        if(response == null){
+            throw new NullRepoException("you haven't saved anything");
+            //return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    //  已经实现过了的
-    // 下载excel文件   是用  ExcelService
+    //  already implemented
+    // download excel file   by using  ExcelService
     @GetMapping("/excel/{id}/content")
     public void downloadExcel(@PathVariable String id, HttpServletResponse response) throws IOException {
         InputStream fis = excelService.getExcelBodyById(id);
@@ -100,8 +107,8 @@ public class ExcelGenerationController {
         FileCopyUtils.copy(fis, response.getOutputStream());
     }
 
-    // 按照id 删除excel 文件， 也应该用 ExcelService
-    // 返回 delete Response
+    // delete excel file
+    // return delete response
     @DeleteMapping("/excel/{id}")
     public ResponseEntity<ExcelResponse> deleteExcel(@PathVariable String id) throws Exception {
         var response = new ExcelResponse();
@@ -111,8 +118,9 @@ public class ExcelGenerationController {
             response.setRespMsg("Already delete");
         }
         else{
-            response.setFileId("");
-            response.setRespMsg("Cannot delete");
+            //response.setFileId("");
+            //response.setRespMsg("Cannot delete");
+            throw new deleteNonExistFileException("non exist file");
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

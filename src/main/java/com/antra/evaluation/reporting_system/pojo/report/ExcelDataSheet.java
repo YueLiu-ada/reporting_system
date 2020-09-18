@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ExcelDataSheet {
     private String title;
-    private List<ExcelDataHeader> headers; // 这里不能改，因为别的地方有用到
+    private List<ExcelDataHeader> headers;
     private List<List<Object>> dataRows;
 
     public String getTitle() {

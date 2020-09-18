@@ -1,6 +1,7 @@
 package com.antra.evaluation.reporting_system.service;
 
 import com.antra.evaluation.reporting_system.Utility.ExcelRequestConverter;
+import com.antra.evaluation.reporting_system.exception.NullRepoException;
 import com.antra.evaluation.reporting_system.pojo.api.ExcelRequest;
 import com.antra.evaluation.reporting_system.pojo.api.ExcelResponse;
 import com.antra.evaluation.reporting_system.pojo.report.ExcelData;
@@ -36,9 +37,9 @@ public class ExcelServiceImpl implements ExcelService {
         return null;
     }
 
-    // 根据 ID 删除特定的file  从hashmap里删除
-    // 如果本来就没这个ID 返回false
-    // 如果本来有这个ID 并且成功删除 返回true
+    // delete file in map according to Id you provided
+    // no such Id return null
+    // have id , delete
     @Override
     public boolean delExcelFileById(String id) {
         ExcelFile tmp = excelRepository.deleteFile(id);

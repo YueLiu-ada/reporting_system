@@ -19,6 +19,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = new ErrorResponse();
         error.setErrorCode(HttpStatus.NOT_FOUND.ordinal()); // 不确定
         error.setErrorMsg(e.getMessage());
+        logger.error("Controller Error: the list is empty now, please save something first ! ",e);
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
@@ -50,7 +51,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = new ErrorResponse();
         error.setErrorMsg(e.getErrorMsg());
         error.setErrorCode(457);
-        logger.error("Controller Error",e);
+        logger.error("Controller Error: the list is empty now, please save something first ! ",e);
         return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
     }
 

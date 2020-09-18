@@ -1,5 +1,6 @@
 package com.antra.evaluation.reporting_system.exception;
 
+// throw up this exception when you delete non-existing files
 public class deleteNonExistFileException extends RuntimeException{
     private String errorMsg;
 

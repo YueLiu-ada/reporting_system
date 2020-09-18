@@ -21,10 +21,10 @@ public class ExcelRepositoryImpl implements ExcelRepository {
         return Optional.ofNullable(excelData.get(id));
     }
 
-    // 保存文件并且返回id
+    // save file and return id
     @Override
     public String saveFile(String id, String abs_path) {
-        // 如果return nll 就是没成功 如果return string 不是 null 就是成功。
+        // return null fail, return a string success
         if(excelData.containsKey(id)){
             //System.out.println("already has id in map");
         }
@@ -35,7 +35,6 @@ public class ExcelRepositoryImpl implements ExcelRepository {
             excelData.put(id, excelFile);
             System.out.println(excelData.get(id));
         }
-        //System.out.println(excelData.size());
         return id;
     }
 
@@ -50,16 +49,14 @@ public class ExcelRepositoryImpl implements ExcelRepository {
         return null;
     }
 
-    // 展示出所有的file
+    // list all files
     @Override
     public List<ExcelFileIdAndPath> getFiles() {
-        if(excelData.size() == 0){
-            //System.out.println("size is null");
-
-            throw new NullRepoException("you haven't save any files. The list is empty now");
+        if(excelData == null || excelData.size() == 0){
+            return null;
         }
         List<ExcelFileIdAndPath> res = new ArrayList<>();
-        // 遍历map并新建新的ExcelFileIdAndPath对象 把他们加入到list里面
+        // traverse map and create new ExcelFileIdAndPath obj  add them to list
         for( String key : excelData.keySet()){
             ExcelFileIdAndPath excelFileIdAndPath = new ExcelFileIdAndPath();
             ExcelFile tmp = excelData.get(key);

@@ -7,7 +7,6 @@ public class NullRepoException extends RuntimeException{
     public NullRepoException(String msg){
         this.errorMsg = msg;
     }
-
     public String getErrorMsg(){
         return errorMsg;
     }
