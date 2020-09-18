@@ -1,17 +1,22 @@
 package com.antra.evaluation.reporting_system.service;
 
-import com.antra.evaluation.reporting_system.pojo.report.ExcelData;
-import com.antra.evaluation.reporting_system.pojo.report.ExcelDataHeader;
-import com.antra.evaluation.reporting_system.pojo.report.ExcelDataSheet;
+import com.antra.evaluation.reporting_system.Utility.ExcelRequestConverter;
+import com.antra.evaluation.reporting_system.exception.FileCannotSaveException;
+import com.antra.evaluation.reporting_system.pojo.api.ExcelRequest;
+import com.antra.evaluation.reporting_system.pojo.api.MultiSheetExcelRequest;
+import com.antra.evaluation.reporting_system.pojo.report.*;
+import com.antra.evaluation.reporting_system.repo.ExcelRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +35,9 @@ import java.util.List;
 @Service
 public class ExcelGenerationServiceImpl implements ExcelGenerationService {
 
+    @Autowired
+    ExcelRepository excelRepository;
+    // 检验 exceldata 是否符合标准？
     private void validateDate(ExcelData data) {
         if (data.getSheets().size() < 1) {
             throw new RuntimeException("Excel Data Error: no sheet is defined");
@@ -49,8 +57,10 @@ public class ExcelGenerationServiceImpl implements ExcelGenerationService {
         }
     }
 
+    // 作用是产生excel文件
     @Override
     public File generateExcelReport(ExcelData data) throws IOException {
+        // 先检验data是否符合标准
         validateDate(data);
         XSSFWorkbook workbook = new XSSFWorkbook();
 
@@ -101,10 +111,10 @@ public class ExcelGenerationServiceImpl implements ExcelGenerationService {
             }
         }
 
-
         File currDir = new File(".");
         String path = currDir.getAbsolutePath();
-        String fileLocation = path.substring(0, path.length() - 1) + "temp.xlsx";  // TODO : file name cannot be hardcoded here
+        String gen_time = data.getGeneratedTime().toString();
+        String fileLocation = path.substring(0, path.length() - 1) + data.getTitle() + gen_time + "temp.xlsx";  // TODO : file name cannot be hardcoded here
 
         FileOutputStream outputStream = new FileOutputStream(fileLocation);
         workbook.write(outputStream);
@@ -114,6 +124,54 @@ public class ExcelGenerationServiceImpl implements ExcelGenerationService {
             e.printStackTrace();
         }
         return new File(fileLocation);
+    }
+
+    @Override
+    public ReturnExcelFileType generateAndSaveExcelFile(ExcelRequest request) throws IOException {
+        //先把ExcelRequest转化成ExcelData
+        ExcelRequestConverter.ExcelRequestValidation(request);
+        File file = generateExcelReport(ExcelRequestConverter.convertExcelRequestToExcelData(request));
+        if(!file.exists() || !file.isFile()){
+            throw new FileCannotSaveException("fail to generate excel file");
+        }
+        // 然后让generator根据这个data生成一个Excel文件
+        String id = file.getName();
+        String abs_path = file.getAbsolutePath();
+        String fileID = excelRepository.saveFile(id, abs_path);
+
+        ReturnExcelFileType reft = new ReturnExcelFileType();
+        reft.setFileId(fileID);
+        reft.setAbs_path(abs_path);
+        reft.setComplete_time(LocalDateTime.now().toString());// set time
+        long file_size = file.length();
+        reft.setFile_size(String.valueOf(file_size) + "Byte");
+        return reft;
+    }
+
+    @Override
+    public ReturnExcelFileType generateAndSaveMultiSheetsExcelFile(MultiSheetExcelRequest request) throws IOException{
+        File file = generateExcelReport(ExcelRequestConverter.convertExcelRequestToExcelData_MultiSheets(request));
+        if(!file.exists() || !file.isFile()){
+            throw new FileCannotSaveException("fail to generate multi-sheets excel file");
+        }
+        // 然后让generator根据这个data生成一个Excel文件
+        String id = file.getName();
+        String abs_path = file.getAbsolutePath();
+        String fileID = excelRepository.saveFile(id, abs_path);
+
+        ReturnExcelFileType reft = new ReturnExcelFileType();
+        reft.setFileId(fileID);
+        reft.setAbs_path(abs_path);
+        reft.setComplete_time(LocalDateTime.now().toString());// set time
+        long file_size = file.length();
+        reft.setFile_size(String.valueOf(file_size) + "Byte");
+        return reft;
+        //return null;
+    }
+    @Override
+    public boolean TestCase(int i){
+        if(i > 0) return true;
+        return false;
     }
 
 }

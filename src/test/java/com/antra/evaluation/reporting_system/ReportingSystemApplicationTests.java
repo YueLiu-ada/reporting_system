@@ -1,9 +1,8 @@
 package com.antra.evaluation.reporting_system;
 
-import com.antra.evaluation.reporting_system.pojo.report.ExcelData;
-import com.antra.evaluation.reporting_system.pojo.report.ExcelDataHeader;
-import com.antra.evaluation.reporting_system.pojo.report.ExcelDataSheet;
-import com.antra.evaluation.reporting_system.pojo.report.ExcelDataType;
+import com.antra.evaluation.reporting_system.pojo.api.ExcelRequest;
+import com.antra.evaluation.reporting_system.pojo.api.MultiSheetExcelRequest;
+import com.antra.evaluation.reporting_system.pojo.report.*;
 import com.antra.evaluation.reporting_system.service.ExcelGenerationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +23,8 @@ class ReportingSystemApplicationTests {
     ExcelGenerationService reportService;
 
     ExcelData data = new ExcelData();
+    ExcelRequest er = new ExcelRequest();
+    MultiSheetExcelRequest er_ms = new MultiSheetExcelRequest();
 
     @BeforeEach // We are using JUnit 5, @Before is replaced by @BeforeEach
     public void setUpData() {
@@ -67,6 +68,50 @@ class ReportingSystemApplicationTests {
         sheet2.setDataRows(dataRows);
         sheet2.setHeaders(headersS1);
         sheets.add(sheet2);
+
+        // request er
+        er.setDescription("this is my file");
+        List<String> headers = new ArrayList<>();
+        headers.add("Name");
+        headers.add("Age");
+        er.setHeaders(headers);
+
+        List<List<Object>> data = new ArrayList<>();
+        List<Object> data1 = new ArrayList<>();
+        data1.add("Teresa");
+        data1.add("5");
+        List<Object> data2 = new ArrayList<>();
+        data2.add("Daniel");
+        data2.add("1");
+        data.add(data1);
+        data.add(data2);
+        er.setData(data);
+        er.setSplitBy("Age");
+        er.setSubmitter("John");
+
+        // request er_ms
+        er_ms.setDescription("this is my file_multiSheet");
+        List<String> headers2 = new ArrayList<>();
+        headers2.add("Name");
+        headers2.add("Class");
+        er_ms.setHeaders(headers2);
+
+        List<List<Object>> data_ms = new ArrayList<>();
+        List<Object> data_ms1 = new ArrayList<>();
+        data_ms1.add("Teresa");
+        data_ms1.add("A");
+        List<Object> data_ms2 = new ArrayList<>();
+        data_ms2.add("Daniel");
+        data_ms2.add("B");
+        List<Object> data_ms3 = new ArrayList<>();
+        data_ms3.add("Ben");
+        data_ms3.add("A");
+        data_ms.add(data_ms1);
+        data_ms.add(data_ms2);
+        data_ms.add(data_ms3);
+        er_ms.setData(data_ms);
+        er_ms.setSplitBy("Class");
+        er_ms.setSubmitter("John");
     }
 
     @Test
@@ -78,5 +123,35 @@ class ReportingSystemApplicationTests {
             e.printStackTrace();
         }
         assertTrue(file != null);
+    }
+
+    @Test
+    public void testGenerationAndSaveExcelFile(){
+        ReturnExcelFileType reft = null;
+        try{
+            reft = reportService.generateAndSaveExcelFile(er);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assertTrue(reft != null);
+
+    }
+    @Test
+    public void testGenerationAndSaveExcelFileMultiSheets(){
+        ReturnExcelFileType reft = null;
+        try{
+            reft = reportService.generateAndSaveMultiSheetsExcelFile(er_ms);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assertTrue(reft != null);
+
+    }
+
+    @Test
+    public void testTestCast(){
+        int i = 10;
+        boolean res = reportService.TestCase(i);
+        assertTrue(res == true);
     }
 }
