@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,7 +36,6 @@ public class ExcelGenerationServiceImpl implements ExcelGenerationService {
 
     @Autowired
     ExcelRepository excelRepository;
-    // 检验 exceldata 是否符合标准？
     private void validateDate(ExcelData data) {
         if (data.getSheets().size() < 1) {
             throw new RuntimeException("Excel Data Error: no sheet is defined");
@@ -57,10 +55,8 @@ public class ExcelGenerationServiceImpl implements ExcelGenerationService {
         }
     }
 
-    // create excel file
     @Override
     public File generateExcelReport(ExcelData data) throws IOException {
-        // valid if data is ok
         validateDate(data);
         XSSFWorkbook workbook = new XSSFWorkbook();
 
@@ -128,13 +124,11 @@ public class ExcelGenerationServiceImpl implements ExcelGenerationService {
 
     @Override
     public ReturnExcelFileType generateAndSaveExcelFile(ExcelRequest request) throws IOException {
-        //change ExcelRequest into ExcelData
         ExcelRequestConverter.ExcelRequestValidation(request);
         File file = generateExcelReport(ExcelRequestConverter.convertExcelRequestToExcelData(request));
         if(!file.exists() || !file.isFile()){
             throw new FileCannotSaveException("fail to generate excel file");
         }
-        // generator create a new excel according to this data
         String id = file.getName();
         String abs_path = file.getAbsolutePath();
         String fileID = excelRepository.saveFile(id, abs_path);
@@ -142,7 +136,7 @@ public class ExcelGenerationServiceImpl implements ExcelGenerationService {
         ReturnExcelFileType reft = new ReturnExcelFileType();
         reft.setFileId(fileID);
         reft.setAbs_path(abs_path);
-        reft.setComplete_time(LocalDateTime.now().toString());// set time
+        reft.setComplete_time(LocalDateTime.now().toString());
         long file_size = file.length();
         reft.setFile_size(String.valueOf(file_size) + "Byte");
         return reft;
@@ -155,7 +149,6 @@ public class ExcelGenerationServiceImpl implements ExcelGenerationService {
         if(!file.exists() || !file.isFile()){
             throw new FileCannotSaveException("fail to generate multi-sheets excel file");
         }
-        // generator create a new Excel according to data
         String id = file.getName();
         String abs_path = file.getAbsolutePath();
         String fileID = excelRepository.saveFile(id, abs_path);
@@ -167,12 +160,12 @@ public class ExcelGenerationServiceImpl implements ExcelGenerationService {
         long file_size = file.length();
         reft.setFile_size(String.valueOf(file_size) + "Byte");
         return reft;
-        //return null;
     }
     @Override
-    public boolean TestCase(int i){
-        if(i > 0) return true;
-        return false;
+    public File TestCase2(String s){
+        File file = new File("abc.txt");
+        return file;
     }
+
 
 }

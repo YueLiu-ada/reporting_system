@@ -15,5 +15,5 @@ public interface ExcelGenerationService {
     File generateExcelReport(ExcelData data) throws IOException;
     ReturnExcelFileType generateAndSaveExcelFile(ExcelRequest request) throws IOException;
     ReturnExcelFileType generateAndSaveMultiSheetsExcelFile(MultiSheetExcelRequest request) throws IOException;
-    boolean TestCase(int i);
+    File TestCase2(String str);
 }

@@ -2,23 +2,19 @@ package com.antra.evaluation.reporting_system;
 
 import com.antra.evaluation.reporting_system.endpoint.ExcelGenerationController;
 import com.antra.evaluation.reporting_system.pojo.api.ExcelRequest;
-import com.antra.evaluation.reporting_system.pojo.api.ExcelResponse;
-import com.antra.evaluation.reporting_system.pojo.report.ReturnExcelFileType;
+import com.antra.evaluation.reporting_system.pojo.report.ExcelData;
 import com.antra.evaluation.reporting_system.service.ExcelGenerationService;
 import com.antra.evaluation.reporting_system.service.ExcelService;
 import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,8 +23,7 @@ import java.util.List;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Matchers.anyObject;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+
 
 //@RunWith(SpringRunner.class)
 //@SpringBootTest(classes = {ExcelGenerationController.class,ExcelGenerationService.class})
@@ -36,12 +31,14 @@ public class APITest {
     @Mock
     ExcelService excelService;
     @Mock
-    ExcelGenerationService excelGenerationService; // 这里改了
+    ExcelGenerationService excelGenerationService;
+
 
     @BeforeEach
     public void configMock() {
         MockitoAnnotations.initMocks(this);
         RestAssuredMockMvc.standaloneSetup(new ExcelGenerationController(excelService,excelGenerationService));
+
     }
 
     @Test
@@ -70,9 +67,9 @@ public class APITest {
                 .statusCode(200)
                 .body("respMsg", Matchers.is("Already delete"));
     }
+
     @Test
-   // @Disabled
-    public void testExcelGeneration() throws IOException {
+    public void testExcelGeneration() throws FileNotFoundException, IOException {
         ExcelRequest er = new ExcelRequest();
         er.setDescription("this is my file");
         List<String> headers = new ArrayList<>();
@@ -92,8 +89,9 @@ public class APITest {
         er.setData(data);
         er.setSplitBy("Age");
         er.setSubmitter("John");
-
-        Mockito.when(excelGenerationService.generateAndSaveExcelFile(er)).thenReturn(new ReturnExcelFileType("fileid","/Users/yueliu/fileid","2020-09-17","330Byte"));
+        File file = new File("temp.xlsx");
+        //Mockito.when(excelGenerationService.generateAndSaveExcelFile(er)).thenReturn();
+        Mockito.when(excelGenerationService.generateExcelReport(new ExcelData())).thenReturn(file);
         given().accept("application/json").contentType(ContentType.JSON).body(er).post("/excel").peek()
                 .then().assertThat()
                 .statusCode(400);

@@ -1,6 +1,5 @@
 package com.antra.evaluation.reporting_system.exception;
 
-import javax.xml.bind.annotation.XmlRootElement;
 
 public class ErrorResponse {
 

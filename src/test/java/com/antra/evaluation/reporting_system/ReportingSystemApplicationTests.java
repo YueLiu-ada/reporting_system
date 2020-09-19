@@ -4,6 +4,7 @@ import com.antra.evaluation.reporting_system.pojo.api.ExcelRequest;
 import com.antra.evaluation.reporting_system.pojo.api.MultiSheetExcelRequest;
 import com.antra.evaluation.reporting_system.pojo.report.*;
 import com.antra.evaluation.reporting_system.service.ExcelGenerationService;
+import com.antra.evaluation.reporting_system.service.ExcelService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +22,12 @@ class ReportingSystemApplicationTests {
 
     @Autowired
     ExcelGenerationService reportService;
+    @Autowired
+    ExcelService excelService;
 
     ExcelData data = new ExcelData();
     ExcelRequest er = new ExcelRequest();
-    MultiSheetExcelRequest er_ms = new MultiSheetExcelRequest();
+    MultiSheetExcelRequest ermultisheet = new MultiSheetExcelRequest();
 
     @BeforeEach // We are using JUnit 5, @Before is replaced by @BeforeEach
     public void setUpData() {
@@ -90,11 +93,11 @@ class ReportingSystemApplicationTests {
         er.setSubmitter("John");
 
         // request er_ms
-        er_ms.setDescription("this is my file_multiSheet");
+        ermultisheet.setDescription("this is my file_multiSheet");
         List<String> headers2 = new ArrayList<>();
         headers2.add("Name");
         headers2.add("Class");
-        er_ms.setHeaders(headers2);
+        ermultisheet.setHeaders(headers2);
 
         List<List<Object>> data_ms = new ArrayList<>();
         List<Object> data_ms1 = new ArrayList<>();
@@ -109,10 +112,11 @@ class ReportingSystemApplicationTests {
         data_ms.add(data_ms1);
         data_ms.add(data_ms2);
         data_ms.add(data_ms3);
-        er_ms.setData(data_ms);
-        er_ms.setSplitBy("Class");
-        er_ms.setSubmitter("John");
+        ermultisheet.setData(data_ms);
+        ermultisheet.setSplitBy("Class");
+        ermultisheet.setSubmitter("John");
     }
+
 
     @Test
     public void testExcelGegeration() {
@@ -140,7 +144,7 @@ class ReportingSystemApplicationTests {
     public void testGenerationAndSaveExcelFileMultiSheets(){
         ReturnExcelFileType reft = null;
         try{
-            reft = reportService.generateAndSaveMultiSheetsExcelFile(er_ms);
+            reft = reportService.generateAndSaveMultiSheetsExcelFile(ermultisheet);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -149,9 +153,34 @@ class ReportingSystemApplicationTests {
     }
 
     @Test
-    public void testTestCast(){
-        int i = 10;
-        boolean res = reportService.TestCase(i);
-        assertTrue(res == true);
+    public void testDelete() {
+        ReturnExcelFileType reft = null;
+        boolean res = false;
+        try{
+            reft = reportService.generateAndSaveExcelFile(er);
+            if(reft != null){
+                res = excelService.delExcelFileById(reft.getFileId());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        assertTrue(res);
+
+    }
+    @Test
+    public void testListAllFiles(){
+        List<ExcelFileIdAndPath> list = null;
+        ReturnExcelFileType reft = null;
+        try{
+            reft = reportService.generateAndSaveExcelFile(er);
+            list = excelService.listExistingFiles();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assert(list != null);
     }
 }

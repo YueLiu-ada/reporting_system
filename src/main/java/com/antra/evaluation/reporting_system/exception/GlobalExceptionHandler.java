@@ -4,10 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -17,7 +15,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = NullPointerException.class)
     public ResponseEntity<ErrorResponse> exceptionHandlerNullPointer(NullPointerException e){
         ErrorResponse error = new ErrorResponse();
-        error.setErrorCode(HttpStatus.NOT_FOUND.ordinal()); // 不确定
+        error.setErrorCode(HttpStatus.NOT_FOUND.ordinal());
         error.setErrorMsg(e.getMessage());
         logger.error("Controller Error: the list is empty now, please save something first ! ",e);
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
@@ -28,6 +26,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = new ErrorResponse();
         error.setErrorMsg(e.getErrorMsg());
         error.setErrorCode(454);
+        logger.error("Controller Error: cannot generate file ! ",e);
         return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
     }
 
@@ -36,6 +35,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = new ErrorResponse();
         error.setErrorMsg(e.getErrorMsg());
         error.setErrorCode(455);
+        logger.error("Controller Error: this id doesn't exist ! ",e);
         return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(value = SpliterCannotFindException.class)
@@ -43,6 +43,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = new ErrorResponse();
         error.setErrorMsg(e.getErrorMsg());
         error.setErrorCode(456);
+        logger.error("Controller Error: you do not provide splitBy ! ",e);
         return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
     }
 
@@ -60,6 +61,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = new ErrorResponse();
         error.setErrorMsg(e.getErrorMsg());
         error.setErrorCode(458);
+        logger.error("Controller Error: Method Arguement is not valid ! ",e);
         return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
     }
 
