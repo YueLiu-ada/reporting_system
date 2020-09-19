@@ -16,8 +16,11 @@ public class ExcelRepositoryImpl implements ExcelRepository {
     Map<String, ExcelFile> excelData = new ConcurrentHashMap<>();
 
     @Override
-    public Optional<ExcelFile> getFileById(String id) {
-        return Optional.ofNullable(excelData.get(id));
+    public ExcelFile getFileById(String id) {
+        if(excelData.containsKey(id)){
+            return excelData.get(id);
+        }
+        return null;
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ExcelRepository {
-    Optional<ExcelFile> getFileById(String id);
+    ExcelFile getFileById(String id);
 
     String saveFile(String id, String abs_path);
 

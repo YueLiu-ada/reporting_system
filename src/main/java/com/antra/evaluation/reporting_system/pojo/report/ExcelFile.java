@@ -3,9 +3,9 @@ package com.antra.evaluation.reporting_system.pojo.report;
 
 public class ExcelFile {
 
-    private String abs_path;
+    private String absPath;
 
-    public String getFile(){ return abs_path; }
+    public String getFile(){ return absPath; }
 
-    public void setFile(String abs_path) { this.abs_path = abs_path; }
+    public void setFile(String abs_path) { this.absPath = abs_path; }
 }

@@ -17,10 +17,13 @@ public class ExcelServiceImpl implements ExcelService {
     ExcelRepository excelRepository;
 
     @Override
-    public InputStream getExcelBodyById(String id) {
+    public InputStream getExcelBodyById(String id) throws FileNotFoundException {
 
-        Optional<ExcelFile> fileInfo = excelRepository.getFileById(id);
-            File file = new File("temp.xlsx");
+        ExcelFile fileInfo = excelRepository.getFileById(id);
+        if(fileInfo == null) {
+            throw new FileNotFoundException("we do not have this file");
+        }
+            File file = new File(fileInfo.getFile());
             try {
                 return new FileInputStream(file);
             } catch (FileNotFoundException e) {
