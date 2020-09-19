@@ -130,15 +130,15 @@ public class ExcelGenerationServiceImpl implements ExcelGenerationService {
             throw new FileCannotSaveException("fail to generate excel file");
         }
         String id = file.getName();
-        String abs_path = file.getAbsolutePath();
-        String fileID = excelRepository.saveFile(id, abs_path);
+        String absPath = file.getAbsolutePath();
+        String fileID = excelRepository.saveFile(id, absPath);
 
         ReturnExcelFileType reft = new ReturnExcelFileType();
         reft.setFileId(fileID);
-        reft.setAbs_path(abs_path);
-        reft.setComplete_time(LocalDateTime.now().toString());
-        long file_size = file.length();
-        reft.setFile_size(String.valueOf(file_size) + "Byte");
+        reft.setAbsPath(absPath);
+        reft.setCompleteTime(LocalDateTime.now().toString());
+        long fileSize = file.length();
+        reft.setFileSize(String.valueOf(fileSize) + "Byte");
         return reft;
     }
 
@@ -150,22 +150,15 @@ public class ExcelGenerationServiceImpl implements ExcelGenerationService {
             throw new FileCannotSaveException("fail to generate multi-sheets excel file");
         }
         String id = file.getName();
-        String abs_path = file.getAbsolutePath();
-        String fileID = excelRepository.saveFile(id, abs_path);
+        String absPath = file.getAbsolutePath();
+        String fileID = excelRepository.saveFile(id, absPath);
 
         ReturnExcelFileType reft = new ReturnExcelFileType();
         reft.setFileId(fileID);
-        reft.setAbs_path(abs_path);
-        reft.setComplete_time(LocalDateTime.now().toString());// set time
+        reft.setAbsPath(absPath);
+        reft.setCompleteTime(LocalDateTime.now().toString());
         long file_size = file.length();
-        reft.setFile_size(String.valueOf(file_size) + "Byte");
+        reft.setFileSize(String.valueOf(file_size) + "Byte");
         return reft;
     }
-    @Override
-    public File TestCase2(String s){
-        File file = new File("abc.txt");
-        return file;
-    }
-
-
 }

@@ -2,17 +2,17 @@ package com.antra.evaluation.reporting_system.pojo.report;
 
 public class ReturnExcelFileType {
     private String fileId;
-    private String abs_path;
-    private String complete_time;
-    private String file_size;
+    private String absPath;
+    private String completeTime;
+    private String fileSize;
 
     public ReturnExcelFileType(){}
 
-    public ReturnExcelFileType(String fileId,String abs_path,String complete_time,String file_size){
+    public ReturnExcelFileType(String fileId,String absPath,String completeTime,String fileSize){
         this.fileId = fileId;
-        this.abs_path = abs_path;
-        this.complete_time = complete_time;
-        this.file_size = file_size;
+        this.absPath = absPath;
+        this.completeTime = completeTime;
+        this.fileSize = fileSize;
     }
 
 
@@ -24,27 +24,27 @@ public class ReturnExcelFileType {
         this.fileId = fileId;
     }
 
-    public String getAbs_path(){
-        return abs_path;
+    public String getAbsPath(){
+        return absPath;
     }
 
-    public void setAbs_path(String abs_path){
-        this.abs_path = abs_path;
+    public void setAbsPath(String absPath){
+        this.absPath = absPath;
     }
 
-    public String getComplete_time(){
-        return complete_time;
+    public String getCompleteTime(){
+        return completeTime;
     }
 
-    public void setComplete_time(String complete_time){
-        this.complete_time = complete_time;
+    public void setCompleteTime(String completeTime){
+        this.completeTime = completeTime;
     }
 
-    public String getFile_size(){
-        return file_size;
+    public String getFileSize(){
+        return fileSize;
     }
 
-    public void setFile_size(String file_size){
-        this.file_size = file_size;
+    public void setFileSize(String fileSize){
+        this.fileSize = fileSize;
     }
 }

@@ -46,9 +46,9 @@ public class ExcelGenerationController {
         else{
             response.setRespMsg("already created and saved");
             response.setFileId(reft.getFileId());
-            response.setFile_path(reft.getAbs_path());
-            response.setComplete_time(reft.getComplete_time());
-            response.setFile_size(reft.getFile_size());
+            response.setFile_path(reft.getAbsPath());
+            response.setComplete_time(reft.getCompleteTime());
+            response.setFile_size(reft.getFileSize());
             return new ResponseEntity<ExcelResponse>(response, HttpStatus.OK);
         }
     }
@@ -64,9 +64,9 @@ public class ExcelGenerationController {
         else{
             response.setRespMsg("file already created and saved");
             response.setFileId(reft.getFileId());
-            response.setFile_path(reft.getAbs_path());
-            response.setComplete_time(reft.getComplete_time());
-            response.setFile_size(reft.getFile_size());
+            response.setFile_path(reft.getAbsPath());
+            response.setComplete_time(reft.getCompleteTime());
+            response.setFile_size(reft.getFileSize());
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
     }

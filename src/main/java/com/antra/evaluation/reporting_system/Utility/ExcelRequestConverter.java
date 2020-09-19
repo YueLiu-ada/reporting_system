@@ -9,7 +9,6 @@ import com.antra.evaluation.reporting_system.pojo.report.ExcelDataHeader;
 import com.antra.evaluation.reporting_system.pojo.report.ExcelDataSheet;
 import com.antra.evaluation.reporting_system.pojo.report.ExcelDataType;
 
-import java.sql.SQLOutput;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -95,7 +94,6 @@ public class ExcelRequestConverter {
             List<List<Object>> excelDataSheet_dataRows = new ArrayList<>();
             for(int j = 0; j < list.size(); j++){
                 if(list.get(j).get(col).equals(obj)){
-                    // find elem add into data row
                     excelDataSheet_dataRows.add(new ArrayList<>(list.get(j)));
                 }
             }

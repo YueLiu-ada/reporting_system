@@ -27,9 +27,7 @@ public class ExcelRepositoryImpl implements ExcelRepository {
         else{
             ExcelFile excelFile = new ExcelFile();
             excelFile.setFile(abs_path);
-            System.out.println(abs_path);
             excelData.put(id, excelFile);
-            System.out.println(excelData.get(id));
         }
         return id;
     }
