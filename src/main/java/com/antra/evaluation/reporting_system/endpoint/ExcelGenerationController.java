@@ -16,10 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.CheckedOutputStream;
@@ -119,15 +116,21 @@ public class ExcelGenerationController {
 
     @GetMapping("/excel/batch")
     @ApiOperation("zip excel files")
-    public ResponseEntity<ExcelResponse> downloadExcelBatch(@RequestBody List<String> ids) throws IOException {
-        ExcelResponse response = new ExcelResponse();
+    public void downloadExcelBatch(@RequestBody List<String> ids, HttpServletResponse response) throws IOException {
         String resPath = excelService.CreateZipFile(ids);
         if(resPath == null){
-            response.setRespMsg("Failed to create zip file");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            response.sendError(404, "cannot download zip file");
         }
-        response.setRespMsg("already created zip file, the path is: " + resPath);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        response.setHeader("Content-Type","application/vnd.ms-excel");
+        response.setHeader("Content-Disposition","attachment; filename:"+resPath); // TODO: File name cannot be hardcoded here
+        File file = new File(resPath);
+        InputStream fis = null;
+        try {
+            fis = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        FileCopyUtils.copy(fis, response.getOutputStream());
     }
 
     @DeleteMapping("/excel/{id}")

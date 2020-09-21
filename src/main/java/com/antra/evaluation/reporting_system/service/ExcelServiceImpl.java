@@ -73,7 +73,7 @@ public class ExcelServiceImpl implements ExcelService {
                 absolutePath.add(excelFile.getFile());
             }
         }
-        String zipFile = System.getProperty("user.dir") + "/" + LocalDateTime.now();
+        String zipFile = System.getProperty("user.dir") + "/" + LocalDateTime.now() + ".zip";
         String[] srcFiles = absolutePath.toArray(new String[absolutePath.size()]);
         try {
             byte[] buffer = new byte[1024];
@@ -94,7 +94,7 @@ public class ExcelServiceImpl implements ExcelService {
             return zipFile;
         }
         catch (IOException ioe) {
-            System.out.println("Error creating zip file: " + ioe);
+            ioe.printStackTrace();
         }
         return null;
     }
