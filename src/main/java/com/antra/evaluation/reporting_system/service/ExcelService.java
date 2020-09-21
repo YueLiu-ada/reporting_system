@@ -10,4 +10,5 @@ public interface ExcelService {
     InputStream getExcelBodyById(String id) throws FileNotFoundException;
     boolean delExcelFileById(String id) throws IOException, Exception;
     List<ExcelFileIdAndPath> listExistingFiles();
+    String CreateZipFile(List<String> ids) throws FileNotFoundException;
 }

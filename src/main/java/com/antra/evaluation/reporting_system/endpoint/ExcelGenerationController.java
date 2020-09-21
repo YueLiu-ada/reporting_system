@@ -17,9 +17,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.CheckedOutputStream;
+import java.util.zip.ZipOutputStream;
 
 @RestController
 public class ExcelGenerationController {
@@ -71,6 +75,30 @@ public class ExcelGenerationController {
         }
     }
 
+    @PostMapping("/excel/batch")
+    @ApiOperation("Generate Excel or Multi-Sheet Excel at once")
+    // when you convert batch, please make sure single excel do not have split-by and multi excel has split-by
+    public ResponseEntity<List<ExcelResponse>> createBatchExcel(@Valid @RequestBody List<ExcelRequest> requestList) throws IOException {
+        List<ExcelResponse> responseList = new ArrayList<>();
+        List<ReturnExcelFileType> reftList = excelGenerationService.generateBatch(requestList);
+        if(reftList == null){
+            throw new FileNotFoundException("cannot find file");
+        }
+        else{
+            for(ReturnExcelFileType reft : reftList){
+                ExcelResponse excelResponse = new ExcelResponse();
+                excelResponse.setRespMsg("file already created and saved");
+                excelResponse.setFileId(reft.getFileId());
+                excelResponse.setFile_path(reft.getAbsPath());
+                excelResponse.setComplete_time(reft.getCompleteTime());
+                excelResponse.setFile_size(reft.getFileSize());
+                responseList.add(excelResponse);
+            }
+            return new ResponseEntity<>(responseList, HttpStatus.OK);
+        }
+    }
+
+
     @GetMapping("/excel")
     @ApiOperation("List all existing files")
     public ResponseEntity<List<ExcelFileIdAndPath>> listExcels() {
@@ -87,6 +115,19 @@ public class ExcelGenerationController {
         response.setHeader("Content-Type","application/vnd.ms-excel");
         response.setHeader("Content-Disposition","attachment; filename:"+id.toString()); // TODO: File name cannot be hardcoded here
         FileCopyUtils.copy(fis, response.getOutputStream());
+    }
+
+    @GetMapping("/excel/batch")
+    @ApiOperation("zip excel files")
+    public ResponseEntity<ExcelResponse> downloadExcelBatch(@RequestBody List<String> ids) throws IOException {
+        ExcelResponse response = new ExcelResponse();
+        String resPath = excelService.CreateZipFile(ids);
+        if(resPath == null){
+            response.setRespMsg("Failed to create zip file");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+        response.setRespMsg("already created zip file, the path is: " + resPath);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/excel/{id}")

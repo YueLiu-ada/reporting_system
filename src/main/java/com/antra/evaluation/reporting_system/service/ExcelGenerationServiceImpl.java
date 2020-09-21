@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -160,5 +161,27 @@ public class ExcelGenerationServiceImpl implements ExcelGenerationService {
         long file_size = file.length();
         reft.setFileSize(String.valueOf(file_size) + "Byte");
         return reft;
+    }
+
+    @Override
+    public List<ReturnExcelFileType> generateBatch(List<ExcelRequest> requestList) throws IOException {
+        List<ReturnExcelFileType> reftList = new ArrayList<>();
+        for(ExcelRequest excelRequest : requestList){
+            if(excelRequest.getSplitBy() == null || excelRequest.getSplitBy().length() == 0){
+                ReturnExcelFileType reft = generateAndSaveExcelFile(excelRequest);
+                reftList.add(reft);
+            }
+            else{
+                MultiSheetExcelRequest multiSheetExcelRequest = new MultiSheetExcelRequest();
+                multiSheetExcelRequest.setData(excelRequest.getData());
+                multiSheetExcelRequest.setDescription(excelRequest.getDescription());
+                multiSheetExcelRequest.setHeaders(excelRequest.getHeaders());
+                multiSheetExcelRequest.setSplitBy(excelRequest.getSplitBy());
+                multiSheetExcelRequest.setSubmitter(excelRequest.getSubmitter());
+                ReturnExcelFileType reft = generateAndSaveMultiSheetsExcelFile(multiSheetExcelRequest);
+                reftList.add(reft);
+            }
+        }
+        return reftList;
     }
 }

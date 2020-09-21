@@ -7,8 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.zip.Adler32;
+import java.util.zip.CheckedOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Service
 public class ExcelServiceImpl implements ExcelService {
@@ -58,5 +64,39 @@ public class ExcelServiceImpl implements ExcelService {
         return res;
     }
 
+    @Override
+    public String CreateZipFile(List<String> ids) throws FileNotFoundException {
+        List<String> absolutePath = new ArrayList<>();
+        for(String id : ids){
+            ExcelFile excelFile = excelRepository.getFileById(id);
+            if(excelFile != null){
+                absolutePath.add(excelFile.getFile());
+            }
+        }
+        String zipFile = System.getProperty("user.dir") + "/" + LocalDateTime.now();
+        String[] srcFiles = absolutePath.toArray(new String[absolutePath.size()]);
+        try {
+            byte[] buffer = new byte[1024];
+            FileOutputStream fos = new FileOutputStream(zipFile);
+            ZipOutputStream zos = new ZipOutputStream(fos);
+            for (int i=0; i < srcFiles.length; i++) {
+                File srcFile = new File(srcFiles[i]);
+                FileInputStream fis = new FileInputStream(srcFile);
+                zos.putNextEntry(new ZipEntry(srcFile.getName()));
+                int length;
+                while ((length = fis.read(buffer)) > 0) {
+                    zos.write(buffer, 0, length);
+                }
+                zos.closeEntry();
+                fis.close();
+            }
+            zos.close();
+            return zipFile;
+        }
+        catch (IOException ioe) {
+            System.out.println("Error creating zip file: " + ioe);
+        }
+        return null;
+    }
 
 }
