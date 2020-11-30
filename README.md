@@ -1,4 +1,4 @@
-# Reporting System #1
+# Reporting System
 
 ### Environment
 In order to compile and run this assessment correctly, below environments are required:
