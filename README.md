@@ -1,4 +1,4 @@
-# Antra Final Evaluation Assessment #1
+# Reporting System #1
 
 ### Environment
 In order to compile and run this assessment correctly, below environments are required:
@@ -7,16 +7,7 @@ In order to compile and run this assessment correctly, below environments are re
 * Maven
 * Also you may need software to view the generated Excel files like Microsoft Office, LibreOffice, WPS, Google Doc etc.
 
-### Objectives
-To evaluate the candidates':
- * Java Coding proficiency.
- * Object oriented design.
- * Design and implementation of REST webservices/endpoints.
- * Basic compiling, packaging, building skill.
- * Testing skill.
- * Debug and issue fixing skill.
- * Code format and conventions.
- 
+
  ### Install
  ####- Run the below command to compile and setup:
  * _`mvn install`_
